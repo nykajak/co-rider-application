@@ -51,17 +51,16 @@ def see_user(uid):
 def create_user():
     """
         Used for: Creating a new user.
-        Usage: POST /users?name=A&email=A@gmail.com&password=nothing
-               REQUIRED params: name, email and password
+        Usage: POST /users
+               REQUIRED form body: name, email and password
         Return: 
-            If successful: <user-id-of-new-user>, 200
+            If successful: {_id:<_id>, name:<name>, email:<email>, password:<password>}, 200
             If required params not given: {"error": "Missing one or more required parameters - name, email and password"}, 400
             If username already taken: {"error": "User with that username already exists!"}, 409
             If email already taken: {"error": "User with that email already exists!"}, 409
             If both email and username taken: {"error": ""Both email and username already in use!""}, 409
     """
-
-    params = {k:v for k,v in request.args.items() if k in ["name","email","password"]}
+    params = {k:v for k,v in request.form.items() if k in ["name","email","password"]}
 
     if len(params) < 3:
         return error_400_bad_request("Missing one or more required parameters - name, email and password")
@@ -88,7 +87,10 @@ def create_user():
         "password": str(bcrypt.generate_password_hash(password))
     }).inserted_id
 
-    return success_200(str(_id))
+    user = client.db.users.find_one({"_id": ObjectId(_id)})
+    user = utility_pythonify(user)
+
+    return success_200(user)
 
 @app.route("/users/<uid>",methods=["DELETE"])
 def delete_user(uid):
@@ -127,7 +129,7 @@ def edit_user(uid):
     if len(uid) != 24:
         return error_404_not_found()
 
-    params = {k:v for k,v in request.args.items() if k in ["name","password","email"]}
+    params = {k:v for k,v in request.form.items() if k in ["name","password","email"]}
 
     if "password" in params:
         params["password"] = bcrypt.generate_password_hash(params["password"])

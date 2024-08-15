@@ -22,9 +22,9 @@
 
 ### POST /users?name=A&email=B&password=C
 - REQUIRED params: name, email and password
-- Used for: Creating a new user.
+- Used for: Creating a new user. Note that passwords are hashed at the server before storing.
 - Return: 
-    - If successful: user-id-of-new-user, 200
+    - If successful: {_id:_id, name:name, email:email, password:password}, 200
     - If required params not given: {"error": "Missing one or more required parameters - name, email and password"}, 400
     - If username already taken: {"error": "User with that username already exists!"}, 409
     - If email already taken: {"error": "User with that email already exists!"}, 409
