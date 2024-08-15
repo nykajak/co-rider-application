@@ -1,7 +1,7 @@
 # Co-rider assignment
 
 ## To run the files
-- Ensure Docker is installed on the target system.
+- Ensure Docker is installed on the target system and docker compose is available.
 - Clone this repo and navigate to it.
 - Run `docker compose up --build` to run the program
 - Navigate to localhost:5000/users to explore the API
